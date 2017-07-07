@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>em-slider</title>
+
+   
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  <style>
+    /**
+        Emsure-Slider element 基础定义
+    **/
+    html,body,div,img {
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+    .em-slider {
+        position: relative;
+    }
+    .em-slider-inner {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+    .em-slider-control {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 15%;
+        font-size: 20px;
+        color: black;
+        text-align: center;
+        text-shadow: 0 1px 2px rgba(0,0,0,.6);
+        background-color: rgba(0,0,0,0);
+    }
+    .em-slider-control.right{
+        right:0;
+        left:auto;
+    }
+    .em-slider-control * {
+        top :50%;
+        position: relative;
+    }
+    .em-slider-item {
+        display: none;
+    }
+    .em-slider-active {
+        display: block;
+    }
+
+    img.bg {
+        display: block;
+        width: 950px;
+        margin: auto;
+    }
+    /** 
+    Emsure-Slider animate定义
+    */
+  </style>
+  </head>
+  <body>
+    <div class="em-slider">
+        <div class="em-slider-inner">
+            <div class="em-slider-item em-slider-active">
+                <img class="bg" data-src="holder.js/950x500?text=Hello" alt="A">
+            </div>
+            <div class="em-slider-item">
+                <img class="bg" data-src="holder.js/950x500?text=World" alt="B">
+            </div>
+            <div class="em-slider-item">
+                <img class="bg" data-src="holder.js/950x500?text=How are you" alt="C">
+            </div>
+        </div>   
+        <a class="left em-slider-control" href="#" data-slide="prev">
+            <span>prev</span>
+        </a>
+        <a class="right em-slider-control" href="#" data-slide="next">
+            <span>next</span>
+        </a>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="holder.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('a.right').click(function(){
+                console.log(1);
+                $('div.em-slider-active').animate({
+                    left: "-100%"
+                },5000,function () {
+                    $(this).hide(0);
+                });
+            });
+        });
+    </script>
+  </body>
+</html>
