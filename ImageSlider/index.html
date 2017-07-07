@@ -8,7 +8,8 @@
     <title>Bootstrap 101 Template</title>
 
    
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -27,32 +28,41 @@
       ol.carousel-indicators li.active {
         width:40px;
       }
-      div.progress {
+      div.progress {       
         height:12px;
-        margin-bottom: 0px;
+        margin-bottom: 0px;        
       }
-      div.progress-bar{
-
+      div.progress-bar {       
+        -webkit-transition: none;
+        -o-transition: none;
+        transition: none; 
       }
+      
     </style>
   </head>
-  <body>
- 
-</div>  
-
-
+  <body>    
   <div class="container-fluid">
     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
   <!-- Indicators -->
   <ol class="carousel-indicators">
     <li data-target="#carousel-example-generic" data-slide-to="0" class="active">
          <div class="progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
             </div>
-          </div>
+         </div>
     </li>
-    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="1">
+      <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+            </div>
+         </div>
+    </li>
+    <li data-target="#carousel-example-generic" data-slide-to="2">
+      <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+            </div>
+         </div>
+    </li>
   </ol>
 
   <!-- Wrapper for slides -->
@@ -60,19 +70,19 @@
     <div class="item active">
       <img class="bg" data-src="holder.js/950x500" alt="A" >
       <div class="carousel-caption">
-        草你大爷
+        草你大爷1
       </div>
     </div>
     <div class="item">
       <img class="bg" data-src="holder.js/950x500" alt="B">
       <div class="carousel-caption">
-        ...
+        草你大爷2
       </div>
     </div>
     <div class="item">
       <img class="bg" data-src="holder.js/950x500" alt="C">
       <div class="carousel-caption">
-        ...
+        草你大爷3
       </div>
     </div>
   </div>
@@ -89,9 +99,9 @@
 </div>
 </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!--Include all compiled plugins (below), or include individual files as needed 
-    <script src="bootstrap.min.js"></script>-->
+    
+    <!--Include all compiled plugins (below), or include individual files as needed-->
+    <script src="bootstrap.js"></script>
     <script src="holder.min.js"></script>
     <script src="carousel.js"></script>
   </body>

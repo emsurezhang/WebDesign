@@ -53,6 +53,7 @@
         position: relative;
     }
     .em-slider-item {
+        position: relative;        
         display: none;
     }
     .em-slider-active {
@@ -94,12 +95,20 @@
     <script src="holder.min.js"></script>
     <script>
         $(document).ready(function(){
-            $('a.right').click(function(){
-                console.log(1);
+            $('a.right').click(function(){               
                 $('div.em-slider-active').animate({
                     left: "-100%"
-                },5000,function () {
+                },5000,function () {                  
                     $(this).hide(0);
+                    $(this).removeClass("em-slider-active");
+                });
+                $('div.em-slider-active').next().css({
+                    left : "100%",
+                    display : "block"
+                }).animate({
+                    left : 0
+                },5000,function(){
+                    $(this).addClass("em-slider-active");
                 });
             });
         });

@@ -67,8 +67,10 @@
 
   Carousel.prototype.cycle = function (e) {
     e || (this.paused = false)
-
+    console.log("begin..");
+    
     this.interval && clearInterval(this.interval)
+    this.interval && this.progress_stop();
 
     this.options.interval
       && !this.paused
@@ -77,23 +79,18 @@
     return this
   }
   
-  Carousel.prototype.progress = function () {
-    this.options._progress_interval = 10;
-    this.options._step = 100/this.options.interval*this.options._progress_interval;
-    setInterval($.proxy(this.progress_step,this),this.options._progress_interval);
-  }
-  Carousel.prototype.progress_step = function (){
-    var cur = parseInt(this.$indicators.find('.active').find('.progress-bar').css("width"));
-    console.log(cur);
-    if(cur < 100) {
-      cur = cur+this.options._step;
-      if(cur<1)
-    } else {
-      cur = 100;
-    }
-    this.$indicators.find('.active').find('.progress-bar').css("width",cur+"%");
+  Carousel.prototype.progress = function () {    
+    this.$indicators.find('.active').find('.progress-bar').animate( {
+      width : "100%"
+    },5000,function (){
+      $(this).css("width","0%");
+    });
   }
 
+  Carousel.prototype.progress_stop = function() {
+    this.$indicators.find('.active').find('.progress-bar').stop().css("width","0%");
+  }
+  
   Carousel.prototype.getItemIndex = function (item) {
     this.$items = item.parent().children('.item')
     return this.$items.index(item || this.$active)
@@ -130,7 +127,7 @@
     }
 
     this.interval = clearInterval(this.interval)
-
+    this.progress_stop();
     return this
   }
 
@@ -145,6 +142,7 @@
   }
 
   Carousel.prototype.slide = function (type, next) {
+    //同时有item和active Class的节点
     var $active   = this.$element.find('.item.active')
     //Returns expr1 if it can be converted to true; otherwise, returns expr2. Thus, when used with Boolean values, || returns true if either operand is true.
     // || 运算符代表 表达式1如果为true，则返回表达式1；否则返回表达式2；
