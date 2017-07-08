@@ -17,7 +17,7 @@
     <![endif]-->
   <style>
     /**
-        Emsure-Slider element 基础定义
+    Emsure-Slider element 基础定义
     **/
     html,body,div,img {
         border: 0;
@@ -29,7 +29,7 @@
     }
     .em-slider-inner {
         position: relative;
-        width: 50%;
+        width: 100%;
         overflow: hidden;
     }
     .em-slider-control {
@@ -59,14 +59,7 @@
         top:0;
         transition-duration: 0.6s;
     }
-    /*点next后，一下张向左移动*/
-    .em-slider-item.em-slider-next.em-slider-right {
-        transform: translate(-100%,0);
-    } 
-    /*点NEXT后，当前的active向左移动*/
-    .em-slider-item.em-slider-next.em-slider-left{
-        transform: translate(-100%,0);
-    }   
+     
     .em-slider-active {        
         display: block;
     }
@@ -79,10 +72,77 @@
     /** 
     Emsure-Slider animate定义
     */
+    .em-slider-next {
+        left: 100%;
+        position :absolute;
+        width: 100%;
+        top:0;
+        display:block;
+    }
+    .em-slider-prev {
+        left:-100%;
+        position: absolute;
+        width:100%;
+        top:0;
+        display: block;
+    }
+    .em-slider-left-next {
+        left : 0;
+        transform: translate(0,0);
+    }
+    .em-slider-right-prev{
+        left:0;
+        transform: translate(0,0)；
+    }
+    /*点NEXT后，当前的active向左移动*/
+    .em-slider-left-active {
+        transform: translate(-100%,0);
+    }
+    .em-slider-right-active {
+        transform: translate(100%,0);
+    } 
+    /*Emsure-slider-indicators*/
+    ol.em-slider-indicators {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        z-index: 15;
+        width: 60%;
+        padding-left: 0;
+        margin-left: -30%;
+        text-align: center;
+        list-style: none;
+    }
+    ol.em-slider-indicators li {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin: 1px;
+        text-indent: -999px;
+        cursor: pointer;
+        background-color: #000 \9;
+        background-color: rgba(0, 0, 0, 0);
+        border: 1px solid #fff;
+        border-radius: 10px;
+    } 
+    ol.em-slider-indicators li.active {
+        background-color: blue;
+    }
   </style>
   </head>
   <body>
     <div class="em-slider">
+        <ol class="em-slider-indicators pause">
+            <li data-target="#carousel-example-generic" data-slide-to="0" class="active">
+                
+            </li>
+            <li data-target="#carousel-example-generic" data-slide-to="1">
+            
+            </li>
+            <li data-target="#carousel-example-generic" data-slide-to="2">
+            
+            </li>
+        </ol>
         <div class="em-slider-inner">
             <div class="em-slider-item em-slider-active">
                 <img class="bg" data-src="holder.js/950x500?text=Hello" alt="A">
@@ -94,10 +154,10 @@
                 <img class="bg" data-src="holder.js/950x500?text=How are you" alt="C">
             </div>
         </div>   
-        <a class="left em-slider-control" href="#" data-slide="prev">
+        <a class="left em-slider-control pause" href="#" data-slide="prev">
             <span>prev</span>
         </a>
-        <a class="right em-slider-control" href="#" data-slide="next">
+        <a class="right em-slider-control pause" href="#" data-slide="next">
             <span>next</span>
         </a>
     </div>
@@ -107,13 +167,112 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="holder.min.js"></script>
     <script>
+        /*
+        Chrome同时支持transition和WebkitTransition，所以css transitionEnd会被触发两次
+        通过下列函数过滤。原文：
+        https://jonsuh.com/blog/detect-the-end-of-css-animations-and-transitions-with-javascript/
+        */
+        var transitionEvent  = function(){
+            var t,el = document.createElement("fakeelement");
+
+            var transitions = {
+                "transition"      : "transitionend",
+                "OTransition"     : "oTransitionEnd",
+                "MozTransition"   : "transitionend",
+                "WebkitTransition": "webkitTransitionEnd"
+            }
+
+            for (t in transitions){
+                if (el.style[t] !== undefined){
+                return transitions[t];
+                }
+            }
+        }();
+       
+        function getItemForDirection (direction, active) {
+            var $items = active.parent().children('.em-slider-item');
+            var activeIndex = $items.index(active);
+            //console.log(activeIndex);
+            var willWrap = (direction == 'prev' && activeIndex === 0)
+                        || (direction == 'next' && activeIndex == ($items.length - 1));
+            //if (willWrap && !this.options.wrap) return active
+            var delta = direction == 'prev' ? -1 : 1;
+            var itemIndex = (activeIndex + delta) % $items.length;
+            //console.log(itemIndex);
+            return $items.eq(itemIndex);
+        }
+        function to (pos) {
+            var $active = $('.em-slider-active');
+            var $items = $active.parent().children();
+            var activeIndex = $items.index($active);
+            if (pos > ($items.length - 1) || pos < 0) return;
+            if (activeIndex == pos) return;
+            if(pos > activeIndex) {
+                next($items.eq(pos));
+            } else {
+                prev($items.eq(pos));
+            }
+            return;
+        }
+        function indicatior (toItem) {
+            var $active = $('.em-slider-active');
+            var $items = $active.parent().children();
+            var toIndex = $items.index(toItem);
+            console.log(toIndex);
+            var $indicators = $('.em-slider-indicators').children();
+            console.log($indicators.length);
+            if ($indicators.length) {
+                $('.em-slider-indicators').find('.active').removeClass('active');
+                var $nextIndicator = $($indicators[toIndex]);
+                $nextIndicator && $nextIndicator.addClass('active')
+            }
+        }
+        
+        function next (nextItem) {
+            var $active = $('.em-slider-active').addClass('em-slider-left-active');
+            var $next = nextItem?nextItem:getItemForDirection('next',$active);
+            //console.dir($next);
+            indicatior($next);
+            $next.addClass('em-slider-next')
+            $next[0].offsetWidth;
+            $next.addClass('em-slider-left-next');
+            $next.one(transitionEvent,function(event){
+                $active.removeClass('em-slider-active em-slider-left-active');
+                $next.removeClass('em-slider-next em-slider-left-next').addClass('em-slider-active');
+            });
+        }
+        function prev (prevItem) {
+            var $active = $('.em-slider-active').addClass('em-slider-right-active');           
+            var $prev = prevItem?prevItem:getItemForDirection('prev',$active);
+            indicatior($prev);
+            $prev.addClass('em-slider-prev')
+            $prev[0].offsetWidth;
+            $prev.addClass('em-slider-right-prev');
+            $prev.one(transitionEvent,function(event){
+                $active.removeClass('em-slider-active em-slider-right-active');
+                $prev.removeClass('em-slider-prev em-slider-right-prev').addClass('em-slider-active');
+            });
+        }
         $(document).ready(function(){
-            $('a.right').click(function(){               
-                var $active = $('.em-slider-active').addClass('em-slider-next em-slider-left');
-                $active.next().css({
-                    left: "100%",                                        
-                });
-                $active.next().addClass('em-slider-active em-slider-next em-slider-right');
+            $('a.right').click(function(){
+                next();
+            });
+            $('a.left').click(function(){
+                prev();
+            });
+            $('ol.em-slider-indicators li').click(function() {
+                var pos = $(this).attr("data-slide-to");
+                to(pos);
+            });
+            var interval = setInterval(function(){
+                next();
+            },5000);
+            $('.pause').hover(function() {
+                clearInterval(interval);
+            },function(){
+                interval = setInterval(function(){
+                    next();
+                },5000);
             });
         });
     </script>
