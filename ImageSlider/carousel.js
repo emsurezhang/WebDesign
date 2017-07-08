@@ -182,6 +182,8 @@
       $next[0].offsetWidth // force reflow
       $active.addClass(direction)
       $next.addClass(direction)
+      /*通过css动画完成，效率高于jquery动画*/
+      /*emulateTransitionEnd获得当动画完成时，触发事件*/
       $active
         .one('bsTransitionEnd', function () {
           $next.removeClass([type, direction].join(' ')).addClass('active')

@@ -29,7 +29,7 @@
     }
     .em-slider-inner {
         position: relative;
-        width: 100%;
+        width: 50%;
         overflow: hidden;
     }
     .em-slider-control {
@@ -55,12 +55,23 @@
     .em-slider-item {
         position: relative;        
         display: none;
+        left:0;
+        top:0;
+        transition-duration: 0.6s;
     }
-    .em-slider-active {
+    /*点next后，一下张向左移动*/
+    .em-slider-item.em-slider-next.em-slider-right {
+        transform: translate(-100%,0);
+    } 
+    /*点NEXT后，当前的active向左移动*/
+    .em-slider-item.em-slider-next.em-slider-left{
+        transform: translate(-100%,0);
+    }   
+    .em-slider-active {        
         display: block;
     }
 
-    img.bg {
+    img.bg {        
         display: block;
         width: 950px;
         margin: auto;
@@ -90,26 +101,19 @@
             <span>next</span>
         </a>
     </div>
+    <div>
+    </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="holder.min.js"></script>
     <script>
         $(document).ready(function(){
             $('a.right').click(function(){               
-                $('div.em-slider-active').animate({
-                    left: "-100%"
-                },5000,function () {                  
-                    $(this).hide(0);
-                    $(this).removeClass("em-slider-active");
+                var $active = $('.em-slider-active').addClass('em-slider-next em-slider-left');
+                $active.next().css({
+                    left: "100%",                                        
                 });
-                $('div.em-slider-active').next().css({
-                    left : "100%",
-                    display : "block"
-                }).animate({
-                    left : 0
-                },5000,function(){
-                    $(this).addClass("em-slider-active");
-                });
+                $active.next().addClass('em-slider-active em-slider-next em-slider-right');
             });
         });
     </script>
