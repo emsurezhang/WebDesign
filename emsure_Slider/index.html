@@ -114,38 +114,53 @@
         list-style: none;
     }
     ol.em-slider-indicators li {
+        position: relative;
         display: inline-block;
-        width: 10px;
-        height: 10px;
+        width: 40px;
+        height: 4px;
         margin: 1px;
         text-indent: -999px;
         cursor: pointer;
-        background-color: #000 \9;
-        background-color: rgba(0, 0, 0, 0);
-        border: 1px solid #fff;
-        border-radius: 10px;
+        background-color: #333;
+        border:none;
+        border-radius: 0px;
+        overflow: hidden;
     } 
-    ol.em-slider-indicators li.active {
-        background-color: blue;
+    ol.em-slider-indicators li.active div.em-slider-indicators-progress{
+        left :0;
+    }
+    .em-slider-indicators-progress {
+        position: absolute;
+        top:0;
+        left: 100%;
+        width: 100%;
+        height: 100%;
+        background-color: #DDD;
+    }
+    button#progress {
+        position: absolute;
+        left:50%;
+        top:200px;
     }
   </style>
   </head>
   <body>
     <div class="em-slider">
-        <ol class="em-slider-indicators pause">
-            <li data-target="#carousel-example-generic" data-slide-to="0" class="active">
-                
+        <ol class="em-slider-indicators">
+            <li data-target="#carousel-example-generic" data-slide-to="0" class="active pausable">
+                <div class="em-slider-indicators-progress"></div>
             </li>
-            <li data-target="#carousel-example-generic" data-slide-to="1">
-            
+            <li data-target="#carousel-example-generic" data-slide-to="1" class="pausable">
+                <div class="em-slider-indicators-progress"></div>
             </li>
-            <li data-target="#carousel-example-generic" data-slide-to="2">
-            
+            <li data-target="#carousel-example-generic" data-slide-to="2" class"pausable">
+                <div class="em-slider-indicators-progress"></div>
             </li>
         </ol>
         <div class="em-slider-inner">
             <div class="em-slider-item em-slider-active">
                 <img class="bg" data-src="holder.js/950x500?text=Hello" alt="A">
+                <button id="progress">Chick to run progress</button>
             </div>
             <div class="em-slider-item">
                 <img class="bg" data-src="holder.js/950x500?text=World" alt="B">
@@ -154,10 +169,10 @@
                 <img class="bg" data-src="holder.js/950x500?text=How are you" alt="C">
             </div>
         </div>   
-        <a class="left em-slider-control pause" href="#" data-slide="prev">
+        <a class="left em-slider-control pausable" href="#" data-slide="prev">
             <span>prev</span>
         </a>
-        <a class="right em-slider-control pause" href="#" data-slide="next">
+        <a class="right em-slider-control pausable" href="#" data-slide="next">
             <span>next</span>
         </a>
     </div>
@@ -218,17 +233,18 @@
             var $active = $('.em-slider-active');
             var $items = $active.parent().children();
             var toIndex = $items.index(toItem);
-            console.log(toIndex);
+            //console.log(toIndex);
             var $indicators = $('.em-slider-indicators').children();
-            console.log($indicators.length);
+            //console.log($indicators.length);
             if ($indicators.length) {
-                $('.em-slider-indicators').find('.active').removeClass('active');
+                $('.em-slider-indicators').find('li.active').removeClass('active').find('div.em-slider-indicators-progress').stop().css("left","100%");
                 var $nextIndicator = $($indicators[toIndex]);
                 $nextIndicator && $nextIndicator.addClass('active')
+                $nextIndicator && $nextIndicator.find('div.em-slider-indicators-progress').css("left",0); 
             }
         }
         
-        function next (nextItem) {
+        function next (nextItem,callback) {
             var $active = $('.em-slider-active').addClass('em-slider-left-active');
             var $next = nextItem?nextItem:getItemForDirection('next',$active);
             //console.dir($next);
@@ -239,6 +255,11 @@
             $next.one(transitionEvent,function(event){
                 $active.removeClass('em-slider-active em-slider-left-active');
                 $next.removeClass('em-slider-next em-slider-left-next').addClass('em-slider-active');
+                if($.isFunction(callback)) {
+                    callback();
+                } else {
+                    console.dir('Callback Is Not Function!!!',callback);
+                }
             });
         }
         function prev (prevItem) {
@@ -251,11 +272,40 @@
             $prev.one(transitionEvent,function(event){
                 $active.removeClass('em-slider-active em-slider-right-active');
                 $prev.removeClass('em-slider-prev em-slider-right-prev').addClass('em-slider-active');
+                progress(); 
             });
         }
+        function progress (time) {
+            var nextInterval = 5000;
+            if(time) {
+                nextInterval += time;
+            }
+            $('.em-slider-indicators').find('.active').find(".em-slider-indicators-progress").css("left",0).animate({
+                left: "100%"
+            },nextInterval,function(){
+                next(null,progress);
+            });
+        }
+        function pause () {
+            $('.em-slider-indicators').find('.active').find(".em-slider-indicators-progress").stop().css({
+                 left : 0
+            });
+
+        }
         $(document).ready(function(){
+            $('button#progress').click(function(){
+                progress();
+            });
+            $('.pausable').hover(function(){
+                pause();
+            },function(){
+                progress();
+            });
+
+
+
             $('a.right').click(function(){
-                next();
+                next(null,progress);
             });
             $('a.left').click(function(){
                 prev();
@@ -264,6 +314,7 @@
                 var pos = $(this).attr("data-slide-to");
                 to(pos);
             });
+            /*
             var interval = setInterval(function(){
                 next();
             },5000);
@@ -273,7 +324,7 @@
                 interval = setInterval(function(){
                     next();
                 },5000);
-            });
+            });*/
         });
     </script>
   </body>
