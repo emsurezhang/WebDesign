@@ -153,7 +153,7 @@
             <li data-target="#carousel-example-generic" data-slide-to="1" class="pausable">
                 <div class="em-slider-indicators-progress"></div>
             </li>
-            <li data-target="#carousel-example-generic" data-slide-to="2" class"pausable">
+            <li data-target="#carousel-example-generic" data-slide-to="2" class="pausable">
                 <div class="em-slider-indicators-progress"></div>
             </li>
         </ol>
@@ -182,6 +182,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="holder.min.js"></script>
     <script>
+        /*
+        写插件需要掌握的知识
+        1、jQuery(function(){}) 或$(function(){}); 它是$(document).ready() 的简写。
+        2、(function($) {...})(jquery);是一个闭包。把jquery作为参数传入匿名函数，并立即执行这个函数，通常在写插件时为了避免名字污染。
+        */
         /*
         Chrome同时支持transition和WebkitTransition，所以css transitionEnd会被触发两次
         通过下列函数过滤。原文：
@@ -272,10 +277,17 @@
             $prev.one(transitionEvent,function(event){
                 $active.removeClass('em-slider-active em-slider-right-active');
                 $prev.removeClass('em-slider-prev em-slider-right-prev').addClass('em-slider-active');
-                progress(); 
+                autoNext(); 
             });
         }
-        function progress (time) {
+        var _autoNext = false;
+        function startAuto () {
+            _autoNext = true;
+            autoNext();
+        }
+        function autoNext (time) {
+            if(!_autoNext) return;
+            //用户点击按钮后，应该有一个较长时间的时延，再开始自动翻页
             var nextInterval = 5000;
             if(time) {
                 nextInterval += time;
@@ -283,23 +295,24 @@
             $('.em-slider-indicators').find('.active').find(".em-slider-indicators-progress").css("left",0).animate({
                 left: "100%"
             },nextInterval,function(){
-                next(null,progress);
+                next(null,autoNext);
             });
         }
-        function pause () {
+        function pause () {            
             $('.em-slider-indicators').find('.active').find(".em-slider-indicators-progress").stop().css({
                  left : 0
             });
+            _autoNext = false;
 
         }
         $(document).ready(function(){
-            $('button#progress').click(function(){
-                progress();
-            });
+            startAuto();
             $('.pausable').hover(function(){
+                console.log("in");
                 pause();
             },function(){
-                progress();
+                console.log("out");
+                startAuto();
             });
 
 
